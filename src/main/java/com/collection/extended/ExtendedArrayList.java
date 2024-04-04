@@ -13,6 +13,9 @@ import com.collection.extended.helpers.ExtendedArrayListIndexOutofBoundsExceptio
  * values in Array List Though it may not be use case for many but idea is to
  * lay out design for those who need this case and memory is not a concern
  * 
+ * 
+ * Similar to java ArrayList this Extended class is not thread safe, hence users
+ * required to provide external synchronization
  */
 public class ExtendedArrayList<E> {
 
@@ -54,6 +57,7 @@ public class ExtendedArrayList<E> {
 	public ExtendedArrayList(long initialCapacity) {
 		if (initialCapacity <= MAX_LENGTH) {
 			base = new Object[1][(int) initialCapacity];
+			colCapacity = (int) initialCapacity;
 		} else {
 			initializeBase(initialCapacity);
 		}
@@ -73,8 +77,10 @@ public class ExtendedArrayList<E> {
 		for (int i = 0; i < (rSize != tRSize ? rSize - 1 : rSize); i++) {
 			base[i] = new Object[MAX_LENGTH];
 		}
-		if (rSize != tRSize)
+		if (rSize != tRSize) {
 			base[rSize - 1] = new Object[cSize];
+			colCapacity = cSize;
+		}
 	}
 
 	/**
@@ -96,7 +102,6 @@ public class ExtendedArrayList<E> {
 	 * @param index
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	public E get(long index) {
 		if (size <= index)
 			throw new ExtendedArrayListIndexOutofBoundsException("index " + index + " out of boundary size " + size);
@@ -114,13 +119,31 @@ public class ExtendedArrayList<E> {
 	 * @return
 	 */
 	public boolean contains(E e) {
-		for (int i = 0; i < rIndex; i++) {
+		for (int i = 0; i <= rIndex; i++) {
 			for (int j = 0; j < cIndex; j++) {
 				if (e.equals(base[i][j]))
 					return true;
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Returns the index of first occurrence
+	 * 
+	 * @param e Object to be searched for finding index
+	 * @return return index if found else -1
+	 */
+	public long indexOf(E e) {
+		for (int i = 0; i <= rIndex; i++) {
+			for (int j = 0; j < cIndex; j++) {
+				if (e.equals(base[i][j])) {
+					return (i * MAX_LENGTH) + j;
+				}
+
+			}
+		}
+		return -1L;
 	}
 
 	/**
@@ -145,6 +168,35 @@ public class ExtendedArrayList<E> {
 		cIndex = 0;
 	}
 
+	/**
+	 * Returns size long value
+	 * 
+	 * @return the size of elements stored to this Array List
+	 */
+	public long size() {
+		return size;
+	}
+
+	/**
+	 * If Array list has no elements returns true similar to java ArrayList
+	 * 
+	 * @return true if this list is empty
+	 */
+	public boolean isEmpty() {
+		return size == 0L;
+	}
+
+	/**
+	 * Returns backed up structure 2D array by this list Please note this is structe
+	 * backed by this ExtendedArrayList and is raw form size is not same as elements
+	 * added
+	 * 
+	 * @return return backed up structure 2D object array
+	 */
+	public Object[][] toArray() {
+		return base;
+	}
+
 	private void checkResize() {
 		if (cIndex == MAX_LENGTH) {
 			Object[][] tmp = new Object[rIndex + 2][];
@@ -153,10 +205,14 @@ public class ExtendedArrayList<E> {
 			}
 			colCapacity = (int) (0.05 * MAX_LENGTH);
 			tmp[rIndex + 1] = new Object[colCapacity];
+			base = tmp;
 			rIndex++;
+			cIndex = 0;
 		} else if (cIndex == colCapacity) {
-			int newColCapacity = (int) (colCapacity * 0.15) > MAX_LENGTH ? MAX_LENGTH : (int) (0.05 * MAX_LENGTH);
+			int newColCapacity = ((int) (colCapacity * 0.15) + colCapacity) > MAX_LENGTH ? MAX_LENGTH
+					: (int) (0.05 * MAX_LENGTH) + colCapacity;
 			base[rIndex] = Arrays.copyOf(base[rIndex], newColCapacity);
+			colCapacity = newColCapacity;
 		}
 	}
 
@@ -187,5 +243,5 @@ public class ExtendedArrayList<E> {
 		return Arrays.deepEquals(base, other.base) && cIndex == other.cIndex && colCapacity == other.colCapacity
 				&& rIndex == other.rIndex && size == other.size;
 	}
-	
+
 }
