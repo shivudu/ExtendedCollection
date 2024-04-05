@@ -1,6 +1,8 @@
-# Extended Dynamic Collection Framework
+# Extended Collection Framework
 ## Overview
-The Extended Dynamic Collection Framework is an enhancement of Java's native Collection Framework, designed to support larger collections by using 2D data structure internally. This allows for greater flexibility and scalability in handling vast amounts of data, overcoming the limitations imposed by Java's default int-based size constraints.
+The Extended Collection Framework is an enhancement of Java's native Collection Framework, designed to support larger collections by using 2D data structure internally. This allows for greater flexibility and scalability in handling vast amounts of data, overcoming the limitations imposed by Java's default int-based size constraints.
+
+This new collection framework also has lower computation for resizing internal structure in add() case unlike java, as it uses 2D backed data structure and does not copy initial chunks.
 
 Of course, the use case may be impractical for many users and has performance considerations, but intend is to help those in rare use cases and provide the design the allows / helps user in over coming.
 
@@ -12,14 +14,14 @@ Efficient Storage: Internally, the framework employs optimized data structures s
 Familiar API: The API maintains familiarity with Java's Collection Framework, ensuring ease of use and seamless integration into existing Java projects.
 
 ## Supported Classes
-The Extended Dynamic Collection Framework includes the following classes with extended long size support:
+The Extended Collection Framework includes the following classes with extended long size support:
 
 ExtendedArrayList: A dynamic array-based list supporting long sizes.
 ExtendedLinkedList: A dynamic linked list supporting long sizes.TODO
 ExtendedHashMap: A hash map supporting long sizes for both keys and values.TODO
 ExtendedHashSet: A hash set supporting long sizes for elements.TODO
 ## Usage
-To incorporate the Extended Dynamic Collection Framework into your Java project, follow these steps:
+To incorporate the Extended Collection Framework into your Java project, follow these steps:
 
 Download the jar file from the project's releases section / have open source code if you are looking to go over enhancements with this.
 
